@@ -1,7 +1,16 @@
-import { EventEmitter } from '@angular/core';
-import { FileLikeObject } from './file-like-object.class';
-import { FileItem } from './file-item.class';
-import { FileType } from './file-type.class';
+import {
+    EventEmitter
+} from '@angular/core';
+import {
+    FileLikeObject
+} from './file-like-object.class';
+import {
+    FileItem
+} from './file-item.class';
+import {
+    FileType
+} from './file-type.class';
+
 function isFile(value) {
     return (File && value instanceof File);
 }
@@ -40,15 +49,27 @@ export class FileUploader {
         this.currentChunkParam = this.options.currentChunkParam;
         this.totalChunkParam = this.options.totalChunkParam;
         this.chunkMethod = this.options.chunkMethod;
-        this.options.filters.unshift({ name: 'queueLimit', fn: this._queueLimitFilter });
+        this.options.filters.unshift({
+            name: 'queueLimit',
+            fn: this._queueLimitFilter
+        });
         if (this.options.maxFileSize) {
-            this.options.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
+            this.options.filters.unshift({
+                name: 'fileSize',
+                fn: this._fileSizeFilter
+            });
         }
         if (this.options.allowedFileType) {
-            this.options.filters.unshift({ name: 'fileType', fn: this._fileTypeFilter });
+            this.options.filters.unshift({
+                name: 'fileType',
+                fn: this._fileTypeFilter
+            });
         }
         if (this.options.allowedMimeType) {
-            this.options.filters.unshift({ name: 'mimeType', fn: this._mimeTypeFilter });
+            this.options.filters.unshift({
+                name: 'mimeType',
+                fn: this._mimeTypeFilter
+            });
         }
         for (let i = 0; i < this.queue.length; i++) {
             this.queue[i].url = this.options.url;
@@ -72,8 +93,7 @@ export class FileUploader {
                 addedFileItems.push(fileItem);
                 this.queue.push(fileItem);
                 this._onAfterAddingFile(fileItem);
-            }
-            else {
+            } else {
                 let filter = arrayOfFilters[this._failFilterIndex];
                 this._onWhenAddingFileFailed(temp, filter, options);
             }
@@ -154,40 +174,83 @@ export class FileUploader {
         return void 0;
     }
     onAfterAddingAll(fileItems) {
-        return { fileItems };
+        return {
+            fileItems
+        };
     }
     onBuildItemForm(fileItem, form) {
-        return { fileItem, form };
+        return {
+            fileItem,
+            form
+        };
     }
     onAfterAddingFile(fileItem) {
-        return { fileItem };
+        return {
+            fileItem
+        };
     }
     onWhenAddingFileFailed(item, filter, options) {
-        return { item, filter, options };
+        return {
+            item,
+            filter,
+            options
+        };
     }
     onBeforeUploadItem(fileItem) {
-        return { fileItem };
+        return {
+            fileItem
+        };
     }
     onProgressItem(fileItem, progress) {
-        return { fileItem, progress };
+        return {
+            fileItem,
+            progress
+        };
     }
     onProgressAll(progress) {
-        return { progress };
+        return {
+            progress
+        };
     }
     onSuccessItem(item, response, status, headers) {
-        return { item, response, status, headers };
+        return {
+            item,
+            response,
+            status,
+            headers
+        };
     }
     onErrorItem(item, response, status, headers) {
-        return { item, response, status, headers };
+        return {
+            item,
+            response,
+            status,
+            headers
+        };
     }
     onCancelItem(item, response, status, headers) {
-        return { item, response, status, headers };
+        return {
+            item,
+            response,
+            status,
+            headers
+        };
     }
     onCompleteChunk(item, response, status, headers) {
-        return { item, response, status, headers };
+        return {
+            item,
+            response,
+            status,
+            headers
+        };
     }
     onCompleteItem(item, response, status, headers) {
-        return { item, response, status, headers };
+        return {
+            item,
+            response,
+            status,
+            headers
+        };
     }
     onCompleteAll() {
         return void 0;
@@ -252,12 +315,10 @@ export class FileUploader {
                 if (item._currentChunk >= item._totalChunks) {
                     this[method](item, response, xhr.status, headers);
                     this._onCompleteItem(item, response, xhr.status, headers);
-                }
-                else {
+                } else {
                     this._onCompleteChunk(item, response, xhr.status, headers);
                 }
-            }
-            else {
+            } else {
                 this[method](item, response, xhr.status, headers);
                 this._onCompleteItem(item, response, xhr.status, headers);
             }
@@ -302,12 +363,11 @@ export class FileUploader {
         this._onBuildItemForm(item, sendable);
         let file = null;
         if (this.options.chunkSize > 0) {
-                //LTTS newly added - prepare only after reading first byte - start
-//            file = item.getNextChunk();				
-              file = item.fileChunks.getCurrentRawFileChunk();
-                //LTTS newly added - prepare only after reading first byte - end
-        }
-        else {
+            // LTTS newly added - prepare only after reading first byte - start
+            // file = item.getNextChunk();
+            file = item.fileChunks.getCurrentRawFileChunk();
+            // LTTS newly added - prepare only after reading first byte - end
+        } else {
             file = item._file;
         }
         const appendFile = () => sendable.append(item.alias, file, item.file.name);
@@ -368,29 +428,26 @@ export class FileUploader {
                     xhr.send(sendable);
                     start = end;
                     end = start + chunkSize;
-                    //LTTS newly added - prepare only after reading first byte - start
+                    // LTTS newly added - prepare only after reading first byte - start
                     item.fileChunks.prepareNextChunk();
-                    //LTTS newly added - prepare only after reading first byte - end
+                    // LTTS newly added - prepare only after reading first byte - end
                 };
                 item.createFileChunk(this.options.chunkSize);
                 item.setIsUploading(true);
                 item._onCompleteChunkCallnext();
                 this._render();
                 return;
-            }
-            else {
+            } else {
                 sendable = this._buildMultiPartSendable(item);
             }
-        }
-        else {
+        } else {
             sendable = this.options.formatDataFunction(item);
         }
         // Append Evenets
         xhr = this._xhrAppendEvents(xhr, item);
         if (this.options.formatDataFunctionIsAsync) {
             sendable.then((result) => xhr.send(JSON.stringify(result)));
-        }
-        else {
+        } else {
             xhr.send(sendable);
         }
         this._render();
