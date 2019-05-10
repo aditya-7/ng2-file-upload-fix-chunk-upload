@@ -302,7 +302,10 @@ export class FileUploader {
         this._onBuildItemForm(item, sendable);
         let file = null;
         if (this.options.chunkSize > 0) {
-            file = item.getNextChunk();
+                //LTTS newly added - prepare only after reading first byte - start
+//            file = item.getNextChunk();				
+              file = item.fileChunks.getCurrentRawFileChunk();
+                //LTTS newly added - prepare only after reading first byte - end
         }
         else {
             file = item._file;
@@ -365,6 +368,9 @@ export class FileUploader {
                     xhr.send(sendable);
                     start = end;
                     end = start + chunkSize;
+                    //LTTS newly added - prepare only after reading first byte - start
+                    item.fileChunks.prepareNextChunk();
+                    //LTTS newly added - prepare only after reading first byte - end
                 };
                 item.createFileChunk(this.options.chunkSize);
                 item.setIsUploading(true);
